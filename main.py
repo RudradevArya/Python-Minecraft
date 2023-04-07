@@ -1,13 +1,13 @@
 
 import pyglet
 
-pyglet.options["shadow_window"] = False # no need for shadow window
+pyglet.options["shadow_window"] = False # no need for shadow window and also bcz may cause problem on some os
 pyglet.options["debug_gl"] = False # makes things slow, so disable it
 
 import pyglet.gl as gl
 
 class Window(pyglet.window.Window): # create a class extending pyglet.window.Window
-	def __init__(self, **args):
+	def __init__(self, **args): #**args means all the argumenats are passed ot this function
 		super().__init__(**args) # pass on arguments to pyglet.window.Window.__init__ function
 	
 	def on_draw(self):
@@ -20,7 +20,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 class Game:
 	def __init__(self):
 		self.config = gl.Config(double_buffer = True, major_version = 3, minor_version = 3) # use modern opengl
-		self.window = Window(config = self.config, width = 800, height = 600, caption = "Minecraft clone", resizable = True, vsync = False) # vsync with pyglet causes problems on some computers, so disable it
+		self.window = Window(config = self.config, width = 800, height = 600, caption = "Sasta Minecraft", resizable = True, vsync = False) # vsync with pyglet causes problems on some computers, so disable it
 	
 	def run(self):
 		pyglet.app.run() # run our application
