@@ -1,4 +1,5 @@
 
+import ctypes # needed to interact with python at a lower level
 import pyglet
 
 pyglet.options["shadow_window"] = False # no need for shadow window and also bcz may cause problem on some os
@@ -6,17 +7,71 @@ pyglet.options["debug_gl"] = False # makes things slow, so disable it
 
 import pyglet.gl as gl
 
+vertex_positions = [ # 3d coordinates for each vertex for the desired shape
+	-0.5,  0.5, 1.0,
+	-0.5, -0.5, 1.0,
+	 0.5, -0.5, 1.0,
+	 0.5,  0.5, 1.0,
+]
+
+indices = [
+	0, 1, 2, # first triangle
+	0, 2, 3, # second triangle
+]
+
+'''
+group of 3 indices makes a triangle
+and 
+one index points to each vertex positions
+
+therfore creating 2 set of indices we are making 2 traingles into one square/rectangle
+'''
+
 class Window(pyglet.window.Window): # create a class extending pyglet.window.Window
 	def __init__(self, **args): #**args means all the argumenats are passed ot this function
 		super().__init__(**args) # pass on arguments to pyglet.window.Window.__init__ function
-	
+		
+		# creating vertex array object (VAOs) which holds VBOs
+
+		self.vao = gl.GLuint(0)
+		gl.glGenVertexArrays(1, ctypes.byref(self.vao))
+		gl.glBindVertexArray(self.vao)
+
+		# creating vertex buffer object(VBOs)
+
+		self.vbo = gl.GLuint(0)
+		gl.glGenBuffers(1, ctypes.byref(self.vbo))
+		gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vbo)
+		
+		gl.glBufferData(gl.GL_ARRAY_BUFFER,
+			ctypes.sizeof(gl.GLfloat * len(vertex_positions)),
+			(gl.GLfloat * len(vertex_positions)) (*vertex_positions),
+			gl.GL_STATIC_DRAW)
+		
+		gl.glVertexAttribPointer(0, 3, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
+		gl.glEnableVertexAttribArray(0)
+
+		# create index buffer object (IBOs) whichs contains all the indices 
+
+		self.ibo = gl.GLuint(0)
+		gl.glGenBuffers(1, self.ibo)
+		gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self.ibo)
+
+		gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER,
+			ctypes.sizeof(gl.GLuint * len(indices)),
+			(gl.GLuint * len(indices)) (*indices),
+			gl.GL_STATIC_DRAW)
+		
+
 	def on_draw(self):
 		gl.glClearColor(1.0, 0.5, 1.0, 1.0) # set clear colour
 		self.clear() # clear screen
-	
+		gl.glDrawElements(gl.GL_TRIANGLES, len(indices), gl.GL_UNSIGNED_INT, None) # draw bound buffers to the screen
+		
 	def on_resize(self, width, height):
-		print(f"Resize {width} * {height}") # print out window size
-
+		print(f"Resize {width} * {height}") # print out window size, changed from older syntax
+		gl.glViewport(0, 0, width, height) # resize the actual OpenGL viewport
+		
 class Game:
 	def __init__(self):
 		self.config = gl.Config(double_buffer = True, major_version = 3, minor_version = 3) # use modern opengl
