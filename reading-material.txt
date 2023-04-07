@@ -1,0 +1,13 @@
+//material to read
+//Shaders: https://learnopengl.com/Getting-started/Shaders
+//Also shaders: https://antongerdelan.net/opengl/shaders.html
+//Ricardo Milos: https://www.urbandictionary.com/define.php?term=Ricardo+Milos
+//
+
+
+#https://stackoverflow.com/questions/23314787/use-of-vertex-array-objects-and-vertex-buffer-objects
+
+# https://openglbook.com/chapter-3-index-buffer-objects-and-primitive-types.html
+
+
+learn about ctypes

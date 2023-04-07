@@ -7,6 +7,8 @@ pyglet.options["debug_gl"] = False # makes things slow, so disable it
 
 import pyglet.gl as gl
 
+import shader
+
 vertex_positions = [ # 3d coordinates for each vertex for the desired shape
 	-0.5,  0.5, 1.0,
 	-0.5, -0.5, 1.0,
@@ -32,12 +34,14 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		super().__init__(**args) # pass on arguments to pyglet.window.Window.__init__ function
 		
 		# creating vertex array object (VAOs) which holds VBOs
+		#https://stackoverflow.com/questions/23314787/use-of-vertex-array-objects-and-vertex-buffer-objects
 
 		self.vao = gl.GLuint(0)
 		gl.glGenVertexArrays(1, ctypes.byref(self.vao))
 		gl.glBindVertexArray(self.vao)
 
 		# creating vertex buffer object(VBOs)
+		#https://stackoverflow.com/questions/23314787/use-of-vertex-array-objects-and-vertex-buffer-objects
 
 		self.vbo = gl.GLuint(0)
 		gl.glGenBuffers(1, ctypes.byref(self.vbo))
@@ -52,6 +56,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		gl.glEnableVertexAttribArray(0)
 
 		# create index buffer object (IBOs) whichs contains all the indices 
+		# https://openglbook.com/chapter-3-index-buffer-objects-and-primitive-types.html
 
 		self.ibo = gl.GLuint(0)
 		gl.glGenBuffers(1, self.ibo)
@@ -62,6 +67,10 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 			(gl.GLuint * len(indices)) (*indices),
 			gl.GL_STATIC_DRAW)
 		
+		# creating shader
+
+		self.shader = shader.Shader("vert.glsl", "frag.glsl")
+		self.shader.use()
 
 	def on_draw(self):
 		gl.glClearColor(1.0, 0.5, 1.0, 1.0) # set clear colour
@@ -71,7 +80,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 	def on_resize(self, width, height):
 		print(f"Resize {width} * {height}") # print out window size, changed from older syntax
 		gl.glViewport(0, 0, width, height) # resize the actual OpenGL viewport
-		
+
 class Game:
 	def __init__(self):
 		self.config = gl.Config(double_buffer = True, major_version = 3, minor_version = 3) # use modern opengl
