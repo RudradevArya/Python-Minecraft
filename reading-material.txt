@@ -65,3 +65,39 @@ Texture arrays: https://www.khronos.org/opengl/wiki/Array_Texture
 Texture compression (isn't useful in the scope of these tutorials, 
 but is nice to keep in mind if/when you're working on more 
 graphically complex projects): https://www.informit.com/articles/article.aspx?p=770639&seqNum=3
+
+
+The Tau manifesto: https://tauday.com/tau-manifesto
+Normalized Device Coordinates (NDC): http://www.songho.ca/opengl/gl_projectionmatrix.html
+Atan2: https://en.wikipedia.org/wiki/Atan2
+
+tau  = 2pi  = circle constant
+
+when in top down of a player who is at origin 
+top to bottom is +z to -z axis
+left ot rigth is -x to x
+
+player is looking at +z direction
+
+the angles then are:
+towards +x  = 0 rads
+increaing anlgels go to counter clock wise direction
+
+then angles are
+when looking 
+forwrds = tau / 4 rads
+left    > tau / 4 rads
+right   < tau / 4 rads 
+
+
+during players Y rotation
+when player is looking at +z direction
+form top down
+top to bottom is +y to -y axis
+left ot rigth is -z to z
+
+angles are:
+looking
+forward = 0 rad
+UP      > 0 rad
+DOWN    < 0 rad
