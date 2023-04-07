@@ -1,3 +1,6 @@
+learn about ctypes
+
+
 //material to read
 //Shaders: https://learnopengl.com/Getting-started/Shaders
 //Also shaders: https://antongerdelan.net/opengl/shaders.html
@@ -10,4 +13,44 @@
 # https://openglbook.com/chapter-3-index-buffer-objects-and-primitive-types.html
 
 
-learn about ctypes
+
+Matrix math: https://gregorygundersen.com/blog/2018/10/24/matrices/
+Matrices in 3D graphics: http://www.songho.ca/opengl/gl_projectionmatrix.html
+and http://www.opengl-tutorial.org/beginners-tutorials/tutorial-3-matrices/
+Shader uniforms: https://www.khronos.org/opengl/wiki/Uniform_%28GLSL%29
+
+matrix when multipled with a vector changes into sometiing 
+else  in a speciifc way
+
+by translating and roating a model matrix at the same times around a 
+object makes it looks  like the camera is moving not the scene
+thus this matrix would be called a view matrix
+
+the final resultant matrix would be called  a model view matrix 
+
+
+projection matrix
+used to make look stuff 3d
+
+this has a camera view of a frustum (cut off triangle pyramid view)
+here the fartheset things are covered in more area so 
+when the matrix squishes it down to the screen the farthesest object appears 
+smaller than the near object just as real life stuff
+
+there is a limit to how close and how far the frustum extends and 
+cuts stuff accordingly
+
+the depth of the frustum is called the "depth component (W)" 
+which is the axis that passes thourgh the frustum
+
+
+model view x projection matirc = model view projection matirc
+
+
+model view projection matirc x vertex vector = 
+
+
+#identity matrix is a spexial "neutral matrix" wheich when multiplied with vector wont be transformed
+
+WARNING ::
+multiplying a matrix by vector != multiplying vector by martix

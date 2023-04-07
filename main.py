@@ -1,4 +1,4 @@
-
+import math # always useful to have
 import ctypes # needed to interact with python at a lower level
 import pyglet
 
@@ -8,12 +8,14 @@ pyglet.options["debug_gl"] = False # makes things slow, so disable it
 import pyglet.gl as gl
 
 import shader
+import matrix # import matrix.py file
 
 vertex_positions = [ # 3d coordinates for each vertex for the desired shape
-	-0.5,  0.5, 1.0,
-	-0.5, -0.5, 1.0,
-	 0.5, -0.5, 1.0,
-	 0.5,  0.5, 1.0,
+	## set the Z component to 0.0 so that our object is centered
+	-0.5,  0.5, 0.0,
+	-0.5, -0.5, 0.0,
+	 0.5, -0.5, 0.0,
+	 0.5,  0.5, 0.0,
 ]
 
 indices = [
@@ -70,9 +72,39 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		# creating shader
 
 		self.shader = shader.Shader("vert.glsl", "frag.glsl")
+		self.shader_matrix_location = self.shader.find_uniform(b"matrix") # get the shader matrix uniform location
 		self.shader.use()
 
+		# create matrices
+
+		self.mv_matrix = matrix.Matrix() # modelview
+		self.p_matrix = matrix.Matrix() # projection
+
+		self.x = 0 # temporary variable
+		pyglet.clock.schedule_interval(self.update, 1.0 / 60) # call update function every 60th of a second
+	
+	def update(self, delta_time):
+		self.x += delta_time # increment self.x consistently
+
 	def on_draw(self):
+
+		# create projection matrix
+		#identity matrix is a spexial "neutral matrix" wheich when multiplied with vector wont be transformed
+		self.p_matrix.load_identity()
+		self.p_matrix.perspective(90, float(self.width) / self.height, 0.1, 500) #0.1 and 500 are the min and max distances of frustum
+
+		# create model view matrix
+
+		self.mv_matrix.load_identity()
+		self.mv_matrix.translate(0, 0, -1)
+		self.mv_matrix.rotate_2d(self.x + 6.28 / 4, math.sin(self.x / 3 * 2) / 2)
+
+		# multiply the two matrices together and send to the shader program
+		#making model view projection matrix
+		mvp_matrix = self.p_matrix * self.mv_matrix
+		self.shader.uniform_matrix(self.shader_matrix_location, mvp_matrix)
+
+		#draw stuff
 		gl.glClearColor(1.0, 0.5, 1.0, 1.0) # set clear colour
 		self.clear() # clear screen
 		gl.glDrawElements(gl.GL_TRIANGLES, len(indices), gl.GL_UNSIGNED_INT, None) # draw bound buffers to the screen

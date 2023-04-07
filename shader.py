@@ -61,5 +61,11 @@ class Shader:
 	def __del__(self): # don't forget to delete the program when the Shader object is deleted!
 		gl.glDeleteProgram(self.program)
 	
+	def find_uniform(self, name):
+		return gl.glGetUniformLocation(self.program, ctypes.create_string_buffer(name))
+	
+	def uniform_matrix(self, location, matrix):
+		gl.glUniformMatrix4fv(location, 1, gl.GL_FALSE, (gl.GLfloat * 16) (*sum(matrix.data, [])))
+		
 	def use(self):
 		gl.glUseProgram(self.program)
