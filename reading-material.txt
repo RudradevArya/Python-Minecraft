@@ -54,3 +54,14 @@ model view projection matirc x vertex vector =
 
 WARNING ::
 multiplying a matrix by vector != multiplying vector by martix
+
+
+
+Texture coordinates, texture filtering, mipmaps, 
+and other texture-related stuff: https://learnopengl.com/Getting-started/Textures
+
+Texture arrays: https://www.khronos.org/opengl/wiki/Array_Texture
+
+Texture compression (isn't useful in the scope of these tutorials, 
+but is nice to keep in mind if/when you're working on more 
+graphically complex projects): https://www.informit.com/articles/article.aspx?p=770639&seqNum=3
