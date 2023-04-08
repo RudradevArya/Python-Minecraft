@@ -88,7 +88,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		gl.glVertexAttribPointer(2, 1, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
 		gl.glEnableVertexAttribArray(2)
 
-		
+
 
 		# create index buffer object (IBOs) whichs contains all the indices 
 		# https://openglbook.com/chapter-3-index-buffer-objects-and-primitive-types.html
@@ -110,7 +110,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 
 		# pyglet things
 		
-		pyglet.clock.schedule_interval(self.update, 1.0 / 60) # call update function every 60th of a second
+		pyglet.clock.schedule_interval(self.update, 1.0 / 10000) # call update function every 60th of a second
 		self.mouse_captured = False
 
 		# camera stuff
@@ -119,13 +119,14 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 	
 
 	def update(self, delta_time):
+		print(f"FPS :: {1.0 / delta_time}")
 		if not self.mouse_captured:
 			self.camera.input = [0, 0, 0]
 
 		self.camera.update_camera(delta_time)
 
 	def on_draw(self):
-		self.camera.update_matrices()
+		# self.camera.update_matrices()
 	
 
 		# bind textures
@@ -142,8 +143,14 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		gl.glClearColor(0.0, 0.0, 0.0, 1.0)
 		#gl.glClearColor(1.0, 0.5, 1.0, 1.0) # set clear colour
 		self.clear() # clear screen
+
+
+		for x in range(16):
+			for y in range(16):
+				for z in range(16):
+					self.camera.update_matrices((x, y, z))
 		
-		gl.glDrawElements(gl.GL_TRIANGLES, len(self.grass.indices), gl.GL_UNSIGNED_INT, None) # draw bound buffers to the screen
+					gl.glDrawElements(gl.GL_TRIANGLES, len(self.grass.indices), gl.GL_UNSIGNED_INT, None) # draw bound buffers to the screen
 		
 
 	# input functions
@@ -194,7 +201,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 
 class Game:
 	def __init__(self):
-		self.config = gl.Config(double_buffer = True, major_version = 3, minor_version = 3, depth_size = 16) # use modern opengl
+		self.config = gl.Config(double_buffer = True, major_version = 3, minor_version = 3, depth_size = 16) # use modern opengl, changeing depth buffers to 16 bits (24 bits is the defalut) 24 bit causes problem on some hardware
 		self.window = Window(config = self.config, width = 800, height = 600, caption = "Sasta Minecraft", resizable = True, vsync = False) # vsync with pyglet causes problems on some computers, so disable it
 	
 	def run(self):

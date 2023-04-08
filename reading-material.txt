@@ -101,3 +101,7 @@ looking
 forward = 0 rad
 UP      > 0 rad
 DOWN    < 0 rad
+
+
+
+Backface culling: https://learnopengl.com/Advanced-OpenGL/Face-culling
