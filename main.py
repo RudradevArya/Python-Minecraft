@@ -12,6 +12,7 @@ import matrix # import matrix.py file
 import block_type
 import texture_manager
 import camera
+import chunk
 
 
 
@@ -34,75 +35,12 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		self.texture_manager.generate_mipmaps() # generate mipmaps for our texture manager's texture
 
 
-		# creating vertex array object (VAOs) which holds VBOs
-		#https://stackoverflow.com/questions/23314787/use-of-vertex-array-objects-and-vertex-buffer-objects
-
-		self.vao = gl.GLuint(0)
-		gl.glGenVertexArrays(1, ctypes.byref(self.vao))
-		gl.glBindVertexArray(self.vao)
-
-		# creating vertex buffer object(VBOs)
-		#https://stackoverflow.com/questions/23314787/use-of-vertex-array-objects-and-vertex-buffer-objects
-
-		self.vertex_position_vbo = gl.GLuint(0)
-		gl.glGenBuffers(1, ctypes.byref(self.vertex_position_vbo))
-		gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.vertex_position_vbo)
+		#creating chunks
+		self.chunks = {}
+		self.chunks[(0 ,0 ,0)] = chunk.Chunk((0, 0, 0))
+		self.chunks[(0 ,0 ,0)].update_mesh(self.cobblestone)
 		
-		gl.glBufferData(gl.GL_ARRAY_BUFFER,
-			ctypes.sizeof(gl.GLfloat * len(self.grass.vertex_positions)),
-			(gl.GLfloat * len(self.grass.vertex_positions)) (*self.grass.vertex_positions),
-			gl.GL_STATIC_DRAW)
-		
-		gl.glVertexAttribPointer(0, 3, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
-		gl.glEnableVertexAttribArray(0)
-		
-		# create tex coord vbo
-
-		self.tex_coord_vbo = gl.GLuint(0)
-		gl.glGenBuffers(1, ctypes.byref(self.tex_coord_vbo))
-		gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.tex_coord_vbo)
-
-		gl.glBufferData(
-			gl.GL_ARRAY_BUFFER,
-			ctypes.sizeof(gl.GLfloat * len(self.grass.tex_coords)),
-			(gl.GLfloat * len(self.grass.tex_coords)) (*self.grass.tex_coords), # use grass block's texture coordinates positions
-			gl.GL_STATIC_DRAW)
-		
-		gl.glVertexAttribPointer(1, 3, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
-		gl.glEnableVertexAttribArray(1)
-
-
-
-		# create shading value vbo
-
-		self.shading_value_vbo = gl.GLuint(0)
-		gl.glGenBuffers(1, ctypes.byref(self.shading_value_vbo))
-		gl.glBindBuffer(gl.GL_ARRAY_BUFFER, self.shading_value_vbo)
-
-		gl.glBufferData(
-			gl.GL_ARRAY_BUFFER,
-			ctypes.sizeof(gl.GLfloat * len(self.grass.shading_values)),
-			(gl.GLfloat * len(self.grass.shading_values)) (*self.grass.shading_values),
-			gl.GL_STATIC_DRAW)
-		
-		gl.glVertexAttribPointer(2, 1, gl.GL_FLOAT, gl.GL_FALSE, 0, 0)
-		gl.glEnableVertexAttribArray(2)
-
-
-
-		# create index buffer object (IBOs) whichs contains all the indices 
-		# https://openglbook.com/chapter-3-index-buffer-objects-and-primitive-types.html
-
-		self.ibo = gl.GLuint(0)
-		gl.glGenBuffers(1, self.ibo)
-		gl.glBindBuffer(gl.GL_ELEMENT_ARRAY_BUFFER, self.ibo)
-
-		gl.glBufferData(gl.GL_ELEMENT_ARRAY_BUFFER,
-			ctypes.sizeof(gl.GLuint * len(self.grass.indices)),
-			(gl.GLuint * len(self.grass.indices)) (*self.grass.indices),# use grass block's indices
-			gl.GL_STATIC_DRAW)
-		
-		# creating shader
+		# creating  shader
 
 		self.shader = shader.Shader("vert.glsl", "frag.glsl")
 		self.shader_sampler_location = self.shader.find_uniform(b"texture_array_sampler") # find our texture array sampler's uniform
@@ -126,7 +64,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		self.camera.update_camera(delta_time)
 
 	def on_draw(self):
-		# self.camera.update_matrices()
+		self.camera.update_matrices()
 	
 
 		# bind textures
@@ -144,13 +82,9 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		#gl.glClearColor(1.0, 0.5, 1.0, 1.0) # set clear colour
 		self.clear() # clear screen
 
-
-		for x in range(16):
-			for y in range(16):
-				for z in range(16):
-					self.camera.update_matrices((x, y, z))
 		
-					gl.glDrawElements(gl.GL_TRIANGLES, len(self.grass.indices), gl.GL_UNSIGNED_INT, None) # draw bound buffers to the screen
+		for chunk_position in self.chunks:
+			self.chunks[chunk_position].draw()
 		
 
 	# input functions

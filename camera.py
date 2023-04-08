@@ -37,7 +37,7 @@ class Camera:
 			self.position[0] += math.cos(angle) * multiplier
 			self.position[2] += math.sin(angle) * multiplier
 
-	def update_matrices(self, block_position):
+	def update_matrices(self):
 		# create projection matrix
 
 		self.p_matrix.load_identity()
@@ -49,7 +49,7 @@ class Camera:
 
 		self.mv_matrix.rotate_2d(-(self.rotation[0] - math.tau / 4), self.rotation[1]) # this needs to come first for a first person view and we need to play around with the x rotation angle a bit since our 0 angle is on the positive x axis while the matrix library's 0 angle is on the negative z axis (because of normalized device coordinates)
 		#self.mv_matrix.translate(-self.position[0], -self.position[1], self.position[2]) # this needs to be negative because if you remember from episode 4, we're technically moving the scene around the camera and not the camera around the scene (except for the z axis because of normalized device coordinates)
-		self.mv_matrix.translate(-self.position[0] + block_position[0], -self.position[1] + block_position[1], self.position[2] + block_position[2])
+		self.mv_matrix.translate(-self.position[0] + self.position[0], -self.position[1] + self.position[1], self.position[2] + self.position[2])
 		
 		# modelviewprojection matrix
 

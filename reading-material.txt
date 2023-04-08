@@ -105,3 +105,9 @@ DOWN    < 0 rad
 
 
 Backface culling: https://learnopengl.com/Advanced-OpenGL/Face-culling
+
+creating one block at a time is very slow even making 16x16x16 blocks 
+was very hard on the hardware with < 2 FPS
+ 
+therfore rendering many blocks at the same time is better 
+also called as "chunks"
