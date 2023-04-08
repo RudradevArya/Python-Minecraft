@@ -64,6 +64,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		#draw stuff
 
 		gl.glEnable(gl.GL_DEPTH_TEST) # enable depth testing so faces are drawn in the right order
+		gl.glEnable(gl.GL_CULL_FACE)
 		gl.glClearColor(0.0, 0.0, 0.0, 1.0)
 		#gl.glClearColor(1.0, 0.5, 1.0, 1.0) # set clear colour
 		self.clear() # clear screen
@@ -72,31 +73,29 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		gl.glFinish() # there seems to be a bit of a bug in Pyglet which makes this call necessary
 
 		
-		# for chunk_position in self.chunks:
-		# 	self.chunks[chunk_position].draw()
 		
 
 	# input functions
 
 	def on_resize(self, width, height):
-		print(f"Resize {width} * {height}") # print out window size, changed from older syntax
-		gl.glViewport(0, 0, width, height) # resize the actual OpenGL viewport
+		print(f"Resize {width} * {height}")
+		gl.glViewport(0, 0, width, height)
 
 		self.camera.width = width
 		self.camera.height = height
-
+	
 	def on_mouse_press(self, x, y, button, modifiers):
 		self.mouse_captured = not self.mouse_captured
 		self.set_exclusive_mouse(self.mouse_captured)
-
+	
 	def on_mouse_motion(self, x, y, delta_x, delta_y):
 		if self.mouse_captured:
 			sensitivity = 0.004
 
-			self.camera.rotation[0] -= delta_x * sensitivity # this needs to be negative since turning to the left decreases delta_x while increasing the x rotation angle
+			self.camera.rotation[0] -= delta_x * sensitivity
 			self.camera.rotation[1] += delta_y * sensitivity
-			
-			self.camera.rotation[1] = max(-math.tau / 4, min(math.tau / 4, self.camera.rotation[1])) # clamp the camera's up / down rotation so that you can't snap your neck
+
+			self.camera.rotation[1] = max(-math.tau / 4, min(math.tau / 4, self.camera.rotation[1]))
 	
 	def on_key_press(self, key, modifiers):
 		if not self.mouse_captured:

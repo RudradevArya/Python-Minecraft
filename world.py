@@ -27,12 +27,31 @@ class World:
         # create chunks with very crude terrain generation
 
 		self.chunks = {}
-		self.chunks[(0,0,0)] = chunk.Chunk(self, (0,0,0))
-		for x in range(chunk.CHUNK_WIDTH):
-			for y in range(chunk.CHUNK_HEIGHT):
-				for z in range(chunk.CHUNK_LENGTH):
-					self.chunks[(0,0,0)].blocks[x][y][z] = 1 # cobblestones block number
-		self.chunks[(0,0,0)].update_mesh()
+		# self.chunks[(0,0,0)] = chunk.Chunk(self, (0,0,0))
+		# for x in range(chunk.CHUNK_WIDTH):
+		# 	for y in range(chunk.CHUNK_HEIGHT):
+		# 		for z in range(chunk.CHUNK_LENGTH):
+		# 			self.chunks[(0,0,0)].blocks[x][y][z] = 1 # cobblestones block number
+		# self.chunks[(0,0,0)].update_mesh()
+
+
+		for x in range(8):
+			for z in range(8):
+				chunk_position = (x - 4, -1, z - 4)
+				current_chunk = chunk.Chunk(self, chunk_position)
+				
+				for i in range(chunk.CHUNK_WIDTH):
+					for j in range(chunk.CHUNK_HEIGHT):
+						for k in range(chunk.CHUNK_LENGTH):
+							if j > 13: current_chunk.blocks[i][j][k] = random.choice([0, 3])
+							else: current_chunk.blocks[i][j][k] = random.choice([0, 0, 1])
+				
+				self.chunks[chunk_position] = current_chunk
+
+		# update each chunk's mesh
+
+		for chunk_position in self.chunks:
+			self.chunks[chunk_position].update_mesh()
 	def get_block_number(self, position): # get the index in the block_types array of the block at a certain position
 		x, y, z = position
 		
