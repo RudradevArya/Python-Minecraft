@@ -12,7 +12,9 @@ import matrix # import matrix.py file
 import block_type
 import texture_manager
 import camera
-import chunk
+#import chunk
+import world
+
 
 
 
@@ -20,25 +22,9 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 	def __init__(self, **args): #**args means all the argumenats are passed ot this function
 		super().__init__(**args) # pass on arguments to pyglet.window.Window.__init__ function
 		
-		# create blocks
+		#create world
 
-		self.texture_manager = texture_manager.Texture_manager(16, 16, 256) # create our texture manager (256 textures that are 16 x 16 pixels each)
-
-		self.cobblestone = block_type.Block_type(self.texture_manager, "cobblestone", {"all": "cobblestone"}) # create each one of our blocks with the texture manager and a list of textures per face
-		self.grass = block_type.Block_type(self.texture_manager, "grass", {"top": "grass", "bottom": "dirt", "sides": "grass_side"})
-		self.dirt = block_type.Block_type(self.texture_manager, "dirt", {"all": "dirt"})
-		self.stone = block_type.Block_type(self.texture_manager, "stone", {"all": "stone"})
-		self.sand = block_type.Block_type(self.texture_manager, "sand", {"all": "sand"})
-		self.planks = block_type.Block_type(self.texture_manager, "planks", {"all": "planks"})
-		self.log = block_type.Block_type(self.texture_manager, "log", {"top": "log_top", "bottom": "log_top", "sides": "log_side"})
-
-		self.texture_manager.generate_mipmaps() # generate mipmaps for our texture manager's texture
-
-
-		#creating chunks
-		self.chunks = {}
-		self.chunks[(0 ,0 ,0)] = chunk.Chunk((0, 0, 0))
-		self.chunks[(0 ,0 ,0)].update_mesh(self.cobblestone)
+		self.world = world.World()
 		
 		# creating  shader
 
@@ -70,7 +56,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		# bind textures
 
 		gl.glActiveTexture(gl.GL_TEXTURE0) # set our active texture unit to the first texture unit
-		gl.glBindTexture(gl.GL_TEXTURE_2D_ARRAY, self.texture_manager.texture_array) # bind our texture manager's texture
+		gl.glBindTexture(gl.GL_TEXTURE_2D_ARRAY, self.world.texture_manager.texture_array) # bind our texture manager's texture
 		gl.glUniform1i(self.shader_sampler_location, 0) # tell our sampler our texture is bound to the first texture unit
 
 
@@ -81,10 +67,13 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		gl.glClearColor(0.0, 0.0, 0.0, 1.0)
 		#gl.glClearColor(1.0, 0.5, 1.0, 1.0) # set clear colour
 		self.clear() # clear screen
+		self.world.draw()
+
+		gl.glFinish() # there seems to be a bit of a bug in Pyglet which makes this call necessary
 
 		
-		for chunk_position in self.chunks:
-			self.chunks[chunk_position].draw()
+		# for chunk_position in self.chunks:
+		# 	self.chunks[chunk_position].draw()
 		
 
 	# input functions

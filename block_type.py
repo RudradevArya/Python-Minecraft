@@ -4,14 +4,16 @@ class Block_type:
     def __init__(self, texture_manager, name = "unknown", block_face_textures = {"all": "cobblestone"}):
         self.name = name
         self.vertex_positions = number.vertex_positions
-        self.indices = number.indices
+        #self.indices = number.indices
         self.tex_coords = number.tex_coords.copy()
         self.shading_values = number.shading_values # set shading values
         
         
         def set_block_face(face, texture): # set a specific face of the block to a certain texture 
+               self.tex_coords[face] = self.tex_coords[face].copy()
+
                for vertex in range(4):
-                   self.tex_coords[face * 12 + vertex * 3 + 2] = texture
+                   self.tex_coords[face][vertex * 3 + 2] = texture
 
         for face in block_face_textures:
             texture = block_face_textures[face] # get that face's texture
