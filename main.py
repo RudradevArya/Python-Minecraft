@@ -48,6 +48,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 			self.camera.input = [0, 0, 0]
 
 		self.camera.update_camera(delta_time)
+		self.world.set_block(self.camera.position, 7)
 
 	def on_draw(self):
 		self.camera.update_matrices()
@@ -92,7 +93,7 @@ class Window(pyglet.window.Window): # create a class extending pyglet.window.Win
 		if self.mouse_captured:
 			sensitivity = 0.004
 
-			self.camera.rotation[0] -= delta_x * sensitivity
+			self.camera.rotation[0] += delta_x * sensitivity
 			self.camera.rotation[1] += delta_y * sensitivity
 
 			self.camera.rotation[1] = max(-math.tau / 4, min(math.tau / 4, self.camera.rotation[1]))

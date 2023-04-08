@@ -43,44 +43,94 @@ class World:
 				for i in range(chunk.CHUNK_WIDTH):
 					for j in range(chunk.CHUNK_HEIGHT):
 						for k in range(chunk.CHUNK_LENGTH):
-							if j == 15: current_chunk.blocks[i][j][k] = random.choice([0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 12, 11])
-							elif j > 12: current_chunk.blocks[i][j][k] = random.choice([0, 6])
-							else: current_chunk.blocks[i][j][k] = random.choice([0, 0, 5])
+							if j == 15: current_chunk.blocks[i][j][k] = random.choices([0, 9, 10], [20, 2, 1])[0]
+							elif j == 14: current_chunk.blocks[i][j][k] = 2
+							elif j > 10: current_chunk.blocks[i][j][k] = 4
+							else: current_chunk.blocks[i][j][k] = 5
 				
 				self.chunks[chunk_position] = current_chunk
 
 		# update each chunk's mesh
 
 		for chunk_position in self.chunks:
+			self.chunks[chunk_position].update_subchunk_meshes()
 			self.chunks[chunk_position].update_mesh()
-	def get_block_number(self, position): # get the index in the block_types array of the block at a certain position
+	
+		# create functions to make things a bit easier
+
+	def get_chunk_position(self, position):
 		x, y, z = position
-		
-		chunk_position = ( # get the chunk in which the the block is's position
+
+		return (
 			math.floor(x / chunk.CHUNK_WIDTH),
 			math.floor(y / chunk.CHUNK_HEIGHT),
 			math.floor(z / chunk.CHUNK_LENGTH))
+	
+	def get_local_position(self, position):
+		x, y, z = position
+		
+		return (
+			int(x % chunk.CHUNK_WIDTH),
+			int(y % chunk.CHUNK_HEIGHT),
+			int(z % chunk.CHUNK_LENGTH))
+	
+	def get_block_number(self, position):
+		x, y, z = position
+		chunk_position = self.get_chunk_position(position)
 
-		if not chunk_position in self.chunks: # return "air" if the chunk doesn't exist
+		if not chunk_position in self.chunks:
 			return 0
 		
-		# get the relative position of the block in the chunk
+		lx, ly, lz = self.get_local_position(position)
 
-		local_x = int(x % chunk.CHUNK_WIDTH)
-		local_y = int(y % chunk.CHUNK_HEIGHT)
-		local_z = int(z % chunk.CHUNK_LENGTH)
+		block_number = self.chunks[chunk_position].blocks[lx][ly][lz]
+		return block_number
 
-		#return self.chunks[chunk_position].blocks[local_x][local_y][local_z] # return the block number at the local position in the correct chunk
+	def is_opaque_block(self, position):
+		# get block type and check if it's opaque or not
+		# air counts as a transparent block, so test for that too
 		
-		# get block type and check if it's transparent or not
-		# if it is, return 0
-		# if it isn't, return the block number
+		block_type = self.block_types[self.get_block_number(position)]
 
-		block_number = self.chunks[chunk_position].blocks[local_x][local_y][local_z]
-		block_type = self.block_types[block_number]
+		if not block_type:
+			return False
+		
+		return not block_type.transparent
+	
+	def set_block(self, position, number): # set number to 0 (air) to remove block
+		x, y, z = position
+		chunk_position = self.get_chunk_position(position)
 
-		if not block_type or block_type.transparent: return 0
-		else: return block_number
+		if not chunk_position in self.chunks: # if no chunks exist at this position, create a new one
+			if number == 0:
+				return # no point in creating a whole new chunk if we're not gonna be adding anything
+
+			self.chunks[chunk_position] = chunk.Chunk(self, chunk_position)
+		
+		if self.get_block_number(position) == number: # no point updating mesh if the block is the same
+			return
+		
+		lx, ly, lz = self.get_local_position(position)
+
+		self.chunks[chunk_position].blocks[lx][ly][lz] = number
+		self.chunks[chunk_position].update_at_position((x, y, z))
+		self.chunks[chunk_position].update_mesh()
+
+		cx, cy, cz = chunk_position
+
+		def try_update_chunk_at_position(chunk_position, position):
+			if chunk_position in self.chunks:
+				self.chunks[chunk_position].update_at_position(position)
+				self.chunks[chunk_position].update_mesh()
+		
+		if lx == chunk.CHUNK_WIDTH - 1: try_update_chunk_at_position((cx + 1, cy, cz), (x + 1, y, z))
+		if lx == 0: try_update_chunk_at_position((cx - 1, cy, cz), (x - 1, y, z))
+
+		if ly == chunk.CHUNK_HEIGHT - 1: try_update_chunk_at_position((cx, cy + 1, cz), (x, y + 1, z))
+		if ly == 0: try_update_chunk_at_position((cx, cy - 1, cz), (x, y - 1, z))
+
+		if lz == chunk.CHUNK_LENGTH - 1: try_update_chunk_at_position((cx, cy, cz + 1), (x, y, z + 1))
+		if lz == 0: try_update_chunk_at_position((cx, cy, cz - 1), (x, y, z - 1))
 
 	def draw(self): # draw all the chunks in the world
 		for chunk_position in self.chunks:

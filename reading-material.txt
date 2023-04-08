@@ -116,3 +116,11 @@ Texture filtering (and mipmaps): http://what-when-how.com/opengl-programming-gui
 Also texture filtering: https://www.khronos.org/opengl/wiki/Sampler_Object#Filtering
 Discarding fragments and blending (partial translucency): 
 https://learnopengl.com/Advanced-OpenGL/Blending
+
+
+
+NDC: Take a look at the resources under eps 4 $ 6
+Line/plane intersection: https://www.kristakingmath.com/blog/intersection-of-a-line-and-a-plane
+(Really, once you understand 
+intersections and how to express objects as equations, you essentially know 
+all of analytic geometry. It's daunting but it's really not that bad.)
