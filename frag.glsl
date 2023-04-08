@@ -10,7 +10,13 @@ in float interpolated_shading_value; // interpolated shading value
 
 
 void main(void) {
-	fragment_colour = texture(texture_array_sampler, interpolated_tex_coords) * interpolated_shading_value; // sample our texture array with the interpolated texture coordinates
+	//fragment_colour = texture(texture_array_sampler, interpolated_tex_coords) * interpolated_shading_value; // sample our texture array with the interpolated texture coordinates
+	vec4 texture_colour = texture(texture_array_sampler, interpolated_tex_coords);
+	fragment_colour = texture_colour * interpolated_shading_value;
+
+	if (texture_colour.a == 0.0) { // discard if texel's alpha component is 0 (texel is transparent)
+		discard;
+	}
 }
 
 

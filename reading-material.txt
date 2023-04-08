@@ -111,3 +111,8 @@ was very hard on the hardware with < 2 FPS
  
 therfore rendering many blocks at the same time is better 
 also called as "chunks"
+
+Texture filtering (and mipmaps): http://what-when-how.com/opengl-programming-guide/filtering-texture-mapping-opengl-programming/
+Also texture filtering: https://www.khronos.org/opengl/wiki/Sampler_Object#Filtering
+Discarding fragments and blending (partial translucency): 
+https://learnopengl.com/Advanced-OpenGL/Blending

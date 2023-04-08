@@ -109,13 +109,16 @@ class Chunk:
 							
 						# check for each block face if it's hidden by another block, and add that face to the chunk mesh if not
 
-						if not self.world.get_block_number((x + 1, y, z)): add_face(0)
-						if not self.world.get_block_number((x - 1, y, z)): add_face(1)
-						if not self.world.get_block_number((x, y + 1, z)): add_face(2)
-						if not self.world.get_block_number((x, y - 1, z)): add_face(3)
-						if not self.world.get_block_number((x, y, z + 1)): add_face(4)
-						if not self.world.get_block_number((x, y, z - 1)): add_face(5)
-		
+						if block_type.is_cube:
+							if not self.world.get_block_number((x + 1, y, z)): add_face(0)
+							if not self.world.get_block_number((x - 1, y, z)): add_face(1)
+							if not self.world.get_block_number((x, y + 1, z)): add_face(2)
+							if not self.world.get_block_number((x, y - 1, z)): add_face(3)
+							if not self.world.get_block_number((x, y, z + 1)): add_face(4)
+							if not self.world.get_block_number((x, y, z - 1)): add_face(5)
+						else:
+							for i in range(len(block_type.vertex_positions)):
+								add_face(i)
 		
 		# pass mesh data to gpu
 

@@ -132,3 +132,5 @@ class Game:
 if __name__ == "__main__": # only run the game if source file is the one run
 	game = Game() # create game object
 	game.run()
+
+
