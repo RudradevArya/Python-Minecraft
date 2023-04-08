@@ -6,9 +6,11 @@ uniform sampler2DArray texture_array_sampler; // create our texture array sample
 
 in vec3 local_position;  // interpolated vertex position
 in vec3 interpolated_tex_coords; // interpolated texture coordinates
+in float interpolated_shading_value; // interpolated shading value
+
 
 void main(void) {
-	fragment_colour = texture(texture_array_sampler, interpolated_tex_coords); // sample our texture array with the interpolated texture coordinates
+	fragment_colour = texture(texture_array_sampler, interpolated_tex_coords) * interpolated_shading_value; // sample our texture array with the interpolated texture coordinates
 }
 
 
