@@ -3,6 +3,7 @@ import number
 class Block_type:
     def __init__(self, texture_manager, name = "unknown", block_face_textures = {"all": "cobblestone"}):
         self.name = name
+        
         self.vertex_positions = number.vertex_positions
         #self.indices = number.indices
         self.tex_coords = number.tex_coords.copy()
