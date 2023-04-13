@@ -37,7 +37,7 @@ class Chunk:
 		
 		# mesh variables
 
-		self.has_mesh = False
+		#self.has_mesh = False
 
 		self.mesh_vertex_positions = []
 		self.mesh_tex_coords = []
@@ -142,8 +142,6 @@ class Chunk:
 		del self.mesh_indices
 
 	def send_mesh_data_to_gpu(self): # pass mesh data to gpu
-		if not self.mesh_index_counter:
-			return
 		
 		# pass mesh data to gpu
 

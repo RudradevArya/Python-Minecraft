@@ -35,9 +35,9 @@ class World:
 
 		self.chunks = {}
 
-		for x in range(8):
-			for z in range(8):
-				chunk_position = (x - 4, -1, z - 4)
+		for x in range(2):
+			for z in range(2):
+				chunk_position = (x - 1, -1, z - 1)
 				current_chunk = chunk.Chunk(self, chunk_position)
 				
 				for i in range(chunk.CHUNK_WIDTH):
